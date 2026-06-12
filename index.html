@@ -1,0 +1,1338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinanzasYA! — Tu escuela de dinero</title>
+<meta name="description" content="Aprende finanzas personales de forma interactiva: ahorro, presupuesto, crédito, inversión y más. Con tutor IA incluido.">
+<meta property="og:title" content="FinanzasYA! — Tu escuela de dinero">
+<meta property="og:description" content="App educativa de finanzas personales para jóvenes colombianos con tutor IA, simuladores y quizzes.">
+<meta property="og:type" content="website">
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Bebas+Neue&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0D0F14;
+    --surface: #161920;
+    --card: #1E2230;
+    --border: #2A2F42;
+    --gold: #F5C842;
+    --gold2: #E8A020;
+    --green: #22C55E;
+    --red: #EF4444;
+    --blue: #3B82F6;
+    --purple: #A855F7;
+    --text: #F0F2F8;
+    --muted: #8892A4;
+    --accent: #F5C842;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Space Grotesk',sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* ── NAV ── */
+  nav{
+    position:fixed;top:0;left:0;right:0;z-index:100;
+    background:rgba(13,15,20,0.92);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--border);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:0 24px;height:60px;
+  }
+  .nav-logo{
+    font-family:'Bebas Neue',cursive;
+    font-size:26px;color:var(--gold);letter-spacing:1px;
+    cursor:pointer;
+  }
+  .nav-logo span{color:var(--text);}
+  .nav-tabs{display:flex;gap:4px;}
+  .nav-tab{
+    background:none;border:none;color:var(--muted);
+    font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:500;
+    padding:6px 12px;border-radius:6px;cursor:pointer;
+    transition:all .2s;white-space:nowrap;
+  }
+  .nav-tab:hover,.nav-tab.active{background:var(--card);color:var(--gold);}
+  .nav-right{display:flex;align-items:center;gap:10px;}
+  .xp-badge{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:20px;padding:4px 12px;
+    font-size:12px;font-weight:600;color:var(--gold);
+    display:flex;align-items:center;gap:6px;
+  }
+
+  /* ── HERO ── */
+  #home{
+    padding:100px 24px 60px;
+    max-width:1100px;margin:0 auto;
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+  }
+  .hero-eyebrow{
+    font-family:'DM Mono',monospace;font-size:11px;font-weight:500;
+    color:var(--gold);letter-spacing:3px;text-transform:uppercase;
+    border:1px solid rgba(245,200,66,.3);
+    padding:5px 14px;border-radius:20px;margin-bottom:24px;
+  }
+  .hero-title{
+    font-family:'Bebas Neue',cursive;
+    font-size:clamp(56px,10vw,110px);
+    line-height:.95;
+    background:linear-gradient(135deg,#F5C842 0%,#E8A020 40%,#FFF 70%,#F5C842 100%);
+    -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    background-clip:text;
+    margin-bottom:20px;
+  }
+  .hero-sub{
+    font-size:17px;color:var(--muted);max-width:520px;
+    line-height:1.65;margin-bottom:36px;
+  }
+  .hero-cta{
+    display:flex;gap:12px;flex-wrap:wrap;justify-content:center;
+  }
+  .btn-primary{
+    background:var(--gold);color:#000;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:14px;
+    border:none;border-radius:var(--radius-sm);padding:12px 24px;cursor:pointer;
+    transition:all .2s;letter-spacing:.5px;
+  }
+  .btn-primary:hover{background:var(--gold2);transform:translateY(-1px);}
+  .btn-ghost{
+    background:transparent;color:var(--text);
+    font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:14px;
+    border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 24px;cursor:pointer;
+    transition:all .2s;
+  }
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold);}
+
+  /* stats bar */
+  .stats-bar{
+    display:flex;gap:32px;flex-wrap:wrap;justify-content:center;
+    margin-top:48px;padding-top:40px;
+    border-top:1px solid var(--border);width:100%;
+  }
+  .stat-item{text-align:center;}
+  .stat-num{font-family:'Bebas Neue',cursive;font-size:38px;color:var(--gold);}
+  .stat-label{font-size:12px;color:var(--muted);margin-top:2px;}
+
+  /* ── SECTION WRAPPER ── */
+  .section{
+    max-width:1100px;margin:0 auto;
+    padding:60px 24px;
+    display:none;
+  }
+  .section.visible{display:block;}
+  .section-title{
+    font-family:'Bebas Neue',cursive;font-size:42px;
+    color:var(--gold);margin-bottom:8px;
+  }
+  .section-sub{font-size:14px;color:var(--muted);margin-bottom:32px;}
+
+  /* ── MODULE CARDS ── */
+  .modules-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:16px;
+  }
+  .module-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:24px;
+    cursor:pointer;
+    transition:all .25s;
+    position:relative;
+    overflow:hidden;
+  }
+  .module-card::before{
+    content:'';position:absolute;top:0;left:0;right:0;height:3px;
+    background:var(--card-accent,var(--gold));
+  }
+  .module-card:hover{
+    border-color:var(--card-accent,var(--gold));
+    transform:translateY(-3px);
+    box-shadow:0 12px 32px rgba(0,0,0,.4);
+  }
+  .module-icon{font-size:36px;margin-bottom:14px;}
+  .module-title{font-weight:700;font-size:17px;margin-bottom:8px;}
+  .module-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:16px;}
+  .module-meta{display:flex;gap:10px;align-items:center;}
+  .module-tag{
+    font-family:'DM Mono',monospace;font-size:11px;
+    background:rgba(255,255,255,.06);padding:3px 8px;border-radius:4px;
+    color:var(--muted);
+  }
+  .module-progress-bar{
+    height:3px;background:var(--border);border-radius:2px;margin-top:14px;
+  }
+  .module-progress-fill{
+    height:100%;background:var(--card-accent,var(--gold));border-radius:2px;
+    transition:width .6s;
+  }
+
+  /* ── LESSON VIEW ── */
+  #lesson-view{display:none;}
+  #lesson-view.visible{display:block;max-width:800px;margin:80px auto;padding:24px;}
+  .lesson-back{
+    background:none;border:none;color:var(--muted);cursor:pointer;
+    font-family:'Space Grotesk',sans-serif;font-size:13px;
+    display:flex;align-items:center;gap:6px;margin-bottom:24px;
+    transition:color .2s;
+  }
+  .lesson-back:hover{color:var(--gold);}
+  .lesson-header{margin-bottom:28px;}
+  .lesson-tag{
+    font-family:'DM Mono',monospace;font-size:11px;
+    color:var(--gold);letter-spacing:2px;margin-bottom:10px;
+  }
+  .lesson-h1{font-family:'Bebas Neue',cursive;font-size:48px;line-height:1;}
+  .lesson-body{
+    font-size:15px;line-height:1.8;color:#D0D4E0;
+  }
+  .lesson-body h3{
+    font-size:18px;font-weight:700;color:var(--text);
+    margin:28px 0 10px;
+  }
+  .lesson-body p{margin-bottom:14px;}
+  .lesson-body ul{margin:0 0 14px 20px;}
+  .lesson-body li{margin-bottom:6px;}
+  .tip-box{
+    background:rgba(245,200,66,.08);
+    border-left:3px solid var(--gold);
+    border-radius:0 8px 8px 0;
+    padding:14px 18px;
+    margin:20px 0;font-size:14px;
+  }
+  .tip-box strong{color:var(--gold);}
+  .lesson-nav{
+    display:flex;justify-content:space-between;
+    margin-top:40px;padding-top:24px;
+    border-top:1px solid var(--border);
+  }
+
+  /* ── QUIZ ── */
+  .quiz-card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:28px;
+    margin-top:20px;
+  }
+  .quiz-q{font-size:16px;font-weight:600;margin-bottom:20px;}
+  .quiz-progress-label{font-size:12px;color:var(--muted);margin-bottom:6px;}
+  .quiz-progress-track{height:4px;background:var(--border);border-radius:2px;margin-bottom:20px;}
+  .quiz-progress-fill{height:100%;background:var(--gold);border-radius:2px;transition:width .4s;}
+  .options-grid{display:flex;flex-direction:column;gap:10px;}
+  .option-btn{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:12px 16px;
+    color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;
+    cursor:pointer;text-align:left;transition:all .2s;
+  }
+  .option-btn:hover:not(:disabled){border-color:var(--gold);background:rgba(245,200,66,.07);}
+  .option-btn.correct{border-color:var(--green);background:rgba(34,197,94,.12);color:var(--green);}
+  .option-btn.wrong{border-color:var(--red);background:rgba(239,68,68,.12);color:var(--red);}
+  .quiz-feedback{
+    margin-top:16px;padding:12px 16px;border-radius:var(--radius-sm);
+    font-size:14px;display:none;
+  }
+  .quiz-feedback.show{display:block;}
+  .quiz-feedback.ok{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green);}
+  .quiz-feedback.fail{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:#FCA5A5;}
+  .quiz-result{
+    text-align:center;padding:40px 20px;
+  }
+  .quiz-score{font-family:'Bebas Neue',cursive;font-size:72px;color:var(--gold);}
+  .quiz-score-label{color:var(--muted);font-size:14px;margin-bottom:20px;}
+
+  /* ── SIMULADORES ── */
+  .sim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px;}
+  .sim-card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:24px;
+  }
+  .sim-title{font-weight:700;font-size:16px;margin-bottom:18px;display:flex;align-items:center;gap:10px;}
+  .sim-title span{font-size:22px;}
+  .input-group{margin-bottom:14px;}
+  .input-label{font-size:12px;color:var(--muted);margin-bottom:5px;font-weight:500;}
+  .sim-input{
+    width:100%;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:10px 14px;
+    color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;
+    outline:none;transition:border-color .2s;
+  }
+  .sim-input:focus{border-color:var(--gold);}
+  .sim-result{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:16px;
+    margin-top:16px;
+  }
+  .sim-result-row{display:flex;justify-content:space-between;margin-bottom:8px;font-size:13px;}
+  .sim-result-row:last-child{margin-bottom:0;font-weight:700;color:var(--gold);font-size:15px;}
+  .sim-result-label{color:var(--muted);}
+  .calc-btn{
+    width:100%;background:var(--gold);color:#000;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:13px;
+    border:none;border-radius:var(--radius-sm);padding:10px;cursor:pointer;
+    margin-top:12px;transition:all .2s;
+  }
+  .calc-btn:hover{background:var(--gold2);}
+
+  /* ── TUTOR IA ── */
+  .chat-wrap{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);overflow:hidden;
+    display:flex;flex-direction:column;height:520px;
+  }
+  .chat-header{
+    padding:16px 20px;border-bottom:1px solid var(--border);
+    display:flex;align-items:center;gap:12px;
+  }
+  .chat-avatar{
+    width:36px;height:36px;border-radius:50%;
+    background:linear-gradient(135deg,var(--gold),var(--gold2));
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;flex-shrink:0;
+  }
+  .chat-name{font-weight:700;font-size:14px;}
+  .chat-status{font-size:12px;color:var(--green);display:flex;align-items:center;gap:4px;}
+  .chat-status::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);}
+  .chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
+  .msg{max-width:85%;font-size:14px;line-height:1.6;}
+  .msg-bot{align-self:flex-start;}
+  .msg-user{align-self:flex-end;}
+  .msg-bubble{
+    padding:11px 15px;border-radius:12px;
+  }
+  .msg-bot .msg-bubble{
+    background:var(--surface);border:1px solid var(--border);
+    border-bottom-left-radius:4px;
+  }
+  .msg-user .msg-bubble{
+    background:var(--gold);color:#000;font-weight:500;
+    border-bottom-right-radius:4px;
+  }
+  .msg-time{font-size:10px;color:var(--muted);margin-top:4px;}
+  .msg-bot .msg-time{text-align:left;}
+  .msg-user .msg-time{text-align:right;}
+  .chat-input-row{
+    padding:14px 16px;border-top:1px solid var(--border);
+    display:flex;gap:10px;
+  }
+  .chat-input{
+    flex:1;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:10px 14px;
+    color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:14px;
+    outline:none;transition:border-color .2s;
+  }
+  .chat-input:focus{border-color:var(--gold);}
+  .chat-send{
+    background:var(--gold);color:#000;border:none;
+    border-radius:var(--radius-sm);padding:10px 16px;cursor:pointer;
+    font-size:18px;transition:all .2s;
+  }
+  .chat-send:hover{background:var(--gold2);}
+  .typing{display:flex;gap:4px;align-items:center;padding:8px 0;}
+  .typing span{
+    width:7px;height:7px;border-radius:50%;background:var(--muted);
+    animation:bounce .9s infinite;
+  }
+  .typing span:nth-child(2){animation-delay:.15s;}
+  .typing span:nth-child(3){animation-delay:.3s;}
+  @keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-8px);}}
+  .quick-btns{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px;}
+  .qbtn{
+    background:var(--surface);border:1px solid var(--border);
+    color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:12px;
+    border-radius:20px;padding:5px 12px;cursor:pointer;transition:all .2s;
+  }
+  .qbtn:hover{border-color:var(--gold);color:var(--gold);}
+
+  /* ── LOGROS ── */
+  .logros-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;}
+  .logro-card{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:20px 16px;text-align:center;
+    transition:all .25s;
+  }
+  .logro-card.unlocked{border-color:var(--gold);background:rgba(245,200,66,.06);}
+  .logro-icon{font-size:36px;margin-bottom:10px;filter:grayscale(1) opacity(.3);}
+  .logro-card.unlocked .logro-icon{filter:none;}
+  .logro-title{font-size:13px;font-weight:700;margin-bottom:4px;}
+  .logro-desc{font-size:11px;color:var(--muted);}
+
+  /* ── PRESUPUESTO ── */
+  .budget-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:600px){.budget-grid{grid-template-columns:1fr;}}
+  .budget-section{
+    background:var(--card);border:1px solid var(--border);
+    border-radius:var(--radius);padding:20px;
+  }
+  .budget-section-title{font-weight:700;font-size:14px;margin-bottom:16px;color:var(--gold);}
+  .budget-row{display:flex;gap:8px;margin-bottom:10px;}
+  .budget-row input{
+    flex:1;background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius-sm);padding:8px 10px;
+    color:var(--text);font-family:'Space Grotesk',sans-serif;font-size:13px;outline:none;
+  }
+  .budget-row input:focus{border-color:var(--gold);}
+  .add-row-btn{
+    background:var(--surface);border:1px dashed var(--border);
+    color:var(--muted);font-family:'Space Grotesk',sans-serif;font-size:12px;
+    border-radius:var(--radius-sm);padding:7px 12px;cursor:pointer;
+    width:100%;margin-top:6px;transition:all .2s;
+  }
+  .add-row-btn:hover{border-color:var(--gold);color:var(--gold);}
+  .budget-summary{
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:var(--radius);padding:20px;margin-top:16px;
+  }
+  .budget-summary-row{
+    display:flex;justify-content:space-between;
+    padding:8px 0;border-bottom:1px solid var(--border);font-size:14px;
+  }
+  .budget-summary-row:last-child{border-bottom:none;font-size:16px;font-weight:700;}
+  .amount-pos{color:var(--green);}
+  .amount-neg{color:var(--red);}
+
+  /* chips */
+  .chip{
+    display:inline-flex;align-items:center;gap:4px;
+    background:var(--surface);border:1px solid var(--border);
+    border-radius:20px;padding:4px 10px;font-size:12px;color:var(--muted);
+  }
+
+  /* responsive nav */
+  @media(max-width:700px){
+    .nav-tabs{display:none;}
+    .nav-right .xp-badge{display:none;}
+  }
+  .mob-nav{
+    display:none;
+    position:fixed;bottom:0;left:0;right:0;
+    background:rgba(22,25,32,.97);
+    border-top:1px solid var(--border);
+    backdrop-filter:blur(10px);
+    z-index:100;
+    padding:8px 0 12px;
+    justify-content:space-around;
+  }
+  @media(max-width:700px){.mob-nav{display:flex;}}
+  .mob-tab{
+    display:flex;flex-direction:column;align-items:center;gap:3px;
+    background:none;border:none;color:var(--muted);cursor:pointer;
+    font-family:'Space Grotesk',sans-serif;font-size:10px;font-weight:600;
+    padding:4px 12px;
+  }
+  .mob-tab.active{color:var(--gold);}
+  .mob-tab-icon{font-size:20px;}
+  @media(max-width:700px){body{padding-bottom:80px;}}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo" onclick="showSection('home')">Finanzas<span>YA!</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showSection('home')">Inicio</button>
+    <button class="nav-tab" onclick="showSection('modulos')">Módulos</button>
+    <button class="nav-tab" onclick="showSection('simuladores')">Simuladores</button>
+    <button class="nav-tab" onclick="showSection('presupuesto')">Presupuesto</button>
+    <button class="nav-tab" onclick="showSection('tutor')">Tutor IA</button>
+    <button class="nav-tab" onclick="showSection('quiz')">Quiz</button>
+    <button class="nav-tab" onclick="showSection('logros')">Logros</button>
+  </div>
+  <div class="nav-right">
+    <div class="xp-badge">⚡ <span id="xp-display">0</span> XP</div>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mob-nav">
+  <button class="mob-tab active" onclick="showSection('home')"><span class="mob-tab-icon">🏠</span>Inicio</button>
+  <button class="mob-tab" onclick="showSection('modulos')"><span class="mob-tab-icon">📚</span>Módulos</button>
+  <button class="mob-tab" onclick="showSection('simuladores')"><span class="mob-tab-icon">🧮</span>Simular</button>
+  <button class="mob-tab" onclick="showSection('tutor')"><span class="mob-tab-icon">🤖</span>Tutor</button>
+  <button class="mob-tab" onclick="showSection('quiz')"><span class="mob-tab-icon">🎯</span>Quiz</button>
+</div>
+
+<!-- ══════════════════ HOME ══════════════════ -->
+<div id="home" class="visible" style="padding-top:100px;padding-bottom:60px;max-width:1100px;margin:0 auto;padding-left:24px;padding-right:24px;">
+  <div style="text-align:center;">
+    <div class="hero-eyebrow">Tu escuela de finanzas personales 🇨🇴</div>
+    <div class="hero-title">Finanzas<br>YA!</div>
+    <p class="hero-sub">Aprende a manejar el dinero con inteligencia, construye tu futuro desde hoy y toma decisiones que cambiarán tu vida. Inspirado en Mis Finanzas en Casa de Davivienda.</p>
+    <div class="hero-cta">
+      <button class="btn-primary" onclick="showSection('modulos')">Empezar a aprender →</button>
+      <button class="btn-ghost" onclick="showSection('tutor')">Hablar con el Tutor IA</button>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-item"><div class="stat-num">6</div><div class="stat-label">Módulos de aprendizaje</div></div>
+      <div class="stat-item"><div class="stat-num">30+</div><div class="stat-label">Preguntas de quiz</div></div>
+      <div class="stat-item"><div class="stat-num">5</div><div class="stat-label">Simuladores interactivos</div></div>
+      <div class="stat-item"><div class="stat-num">∞</div><div class="stat-label">Tutor IA disponible</div></div>
+    </div>
+  </div>
+
+  <!-- Quick modules preview -->
+  <div style="margin-top:64px;">
+    <h2 style="font-family:'Bebas Neue',cursive;font-size:32px;color:var(--muted);margin-bottom:20px;">LO QUE VAS A APRENDER</h2>
+    <div class="modules-grid">
+      <div class="module-card" style="--card-accent:#F5C842" onclick="showSection('modulos')">
+        <div class="module-icon">💰</div>
+        <div class="module-title">El Dinero</div>
+        <div class="module-desc">Qué es, cómo funciona el sistema financiero y por qué el dinero tiene valor.</div>
+      </div>
+      <div class="module-card" style="--card-accent:#22C55E" onclick="showSection('modulos')">
+        <div class="module-icon">🏦</div>
+        <div class="module-title">El Ahorro</div>
+        <div class="module-desc">Estrategias reales para ahorrar, aunque ganes poco. El hábito que cambia todo.</div>
+      </div>
+      <div class="module-card" style="--card-accent:#3B82F6" onclick="showSection('modulos')">
+        <div class="module-icon">📊</div>
+        <div class="module-title">Presupuesto</div>
+        <div class="module-desc">Planea tus gastos, controla tus ingresos y nunca más te quedes sin dinero antes de fin de mes.</div>
+      </div>
+      <div class="module-card" style="--card-accent:#EF4444" onclick="showSection('modulos')">
+        <div class="module-icon">💳</div>
+        <div class="module-title">Crédito</div>
+        <div class="module-desc">Aprende a usar el crédito a tu favor, entiende tasas e historial crediticio.</div>
+      </div>
+      <div class="module-card" style="--card-accent:#A855F7" onclick="showSection('modulos')">
+        <div class="module-icon">🛡️</div>
+        <div class="module-title">Seguros</div>
+        <div class="module-desc">Protege lo que construyes. Entiende los seguros sin complicaciones.</div>
+      </div>
+      <div class="module-card" style="--card-accent:#F97316" onclick="showSection('modulos')">
+        <div class="module-icon">📈</div>
+        <div class="module-title">Inversión</div>
+        <div class="module-desc">Haz que tu dinero trabaje para ti: CDT, fondos, acciones y más opciones en Colombia.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ MÓDULOS ══════════════════ -->
+<div id="modulos" class="section">
+  <div class="section-title">Módulos de Aprendizaje</div>
+  <div class="section-sub">Haz clic en un módulo para aprender · Ganas XP al completar cada uno</div>
+  <div class="modules-grid" id="modules-list"></div>
+</div>
+
+<!-- ══════════════════ LESSON VIEW ══════════════════ -->
+<div id="lesson-view">
+  <button class="lesson-back" onclick="closelesson()">← Volver a módulos</button>
+  <div class="lesson-header">
+    <div class="lesson-tag" id="lesson-tag"></div>
+    <div class="lesson-h1" id="lesson-h1"></div>
+  </div>
+  <div class="lesson-body" id="lesson-body"></div>
+  <div class="lesson-nav">
+    <button class="btn-ghost" onclick="closelesson()">← Módulos</button>
+    <button class="btn-primary" onclick="goQuiz()">Hacer el Quiz →</button>
+  </div>
+</div>
+
+<!-- ══════════════════ SIMULADORES ══════════════════ -->
+<div id="simuladores" class="section">
+  <div class="section-title">Simuladores Financieros</div>
+  <div class="section-sub">Calcula de forma práctica — aprende haciendo</div>
+  <div class="sim-grid">
+
+    <!-- Ahorro -->
+    <div class="sim-card">
+      <div class="sim-title"><span>🏦</span> Simulador de Ahorro</div>
+      <div class="input-group"><div class="input-label">Ahorro mensual ($)</div><input class="sim-input" id="s-ahorro-mes" type="number" placeholder="100000" value="100000"></div>
+      <div class="input-group"><div class="input-label">Tasa de interés anual (%)</div><input class="sim-input" id="s-ahorro-tasa" type="number" placeholder="4" value="4"></div>
+      <div class="input-group"><div class="input-label">Años</div><input class="sim-input" id="s-ahorro-años" type="number" placeholder="3" value="3"></div>
+      <button class="calc-btn" onclick="calcAhorro()">Calcular</button>
+      <div class="sim-result" id="res-ahorro" style="display:none"></div>
+    </div>
+
+    <!-- Crédito -->
+    <div class="sim-card">
+      <div class="sim-title"><span>💳</span> Simulador de Crédito</div>
+      <div class="input-group"><div class="input-label">Monto del préstamo ($)</div><input class="sim-input" id="s-cred-monto" type="number" placeholder="5000000" value="5000000"></div>
+      <div class="input-group"><div class="input-label">Tasa de interés mensual (%)</div><input class="sim-input" id="s-cred-tasa" type="number" placeholder="1.8" value="1.8"></div>
+      <div class="input-group"><div class="input-label">Plazo (meses)</div><input class="sim-input" id="s-cred-plazo" type="number" placeholder="24" value="24"></div>
+      <button class="calc-btn" onclick="calcCredito()">Calcular cuota</button>
+      <div class="sim-result" id="res-credito" style="display:none"></div>
+    </div>
+
+    <!-- Regla 50/30/20 -->
+    <div class="sim-card">
+      <div class="sim-title"><span>📊</span> Regla 50/30/20</div>
+      <div class="input-group"><div class="input-label">Tu ingreso mensual ($)</div><input class="sim-input" id="s-5020-ing" type="number" placeholder="1300000" value="1300000"></div>
+      <button class="calc-btn" onclick="calc5020()">Distribuir</button>
+      <div class="sim-result" id="res-5020" style="display:none"></div>
+    </div>
+
+    <!-- Meta de ahorro -->
+    <div class="sim-card">
+      <div class="sim-title"><span>🎯</span> ¿Cuánto tiempo para mi meta?</div>
+      <div class="input-group"><div class="input-label">Meta en dinero ($)</div><input class="sim-input" id="s-meta-total" type="number" placeholder="2000000" value="2000000"></div>
+      <div class="input-group"><div class="input-label">Puedo ahorrar al mes ($)</div><input class="sim-input" id="s-meta-mes" type="number" placeholder="200000" value="200000"></div>
+      <button class="calc-btn" onclick="calcMeta()">Calcular tiempo</button>
+      <div class="sim-result" id="res-meta" style="display:none"></div>
+    </div>
+
+    <!-- CDT -->
+    <div class="sim-card">
+      <div class="sim-title"><span>📈</span> Simulador CDT</div>
+      <div class="input-group"><div class="input-label">Capital a invertir ($)</div><input class="sim-input" id="s-cdt-cap" type="number" placeholder="3000000" value="3000000"></div>
+      <div class="input-group"><div class="input-label">Tasa EA (%)</div><input class="sim-input" id="s-cdt-tasa" type="number" placeholder="11" value="11"></div>
+      <div class="input-group"><div class="input-label">Plazo (días)</div><input class="sim-input" id="s-cdt-dias" type="number" placeholder="180" value="180"></div>
+      <button class="calc-btn" onclick="calcCDT()">Ver rendimiento</button>
+      <div class="sim-result" id="res-cdt" style="display:none"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════ PRESUPUESTO ══════════════════ -->
+<div id="presupuesto" class="section">
+  <div class="section-title">Mi Presupuesto Personal</div>
+  <div class="section-sub">Registra tus ingresos y gastos — descubre si estás en superávit o déficit</div>
+  <div class="budget-grid">
+    <div class="budget-section">
+      <div class="budget-section-title">✅ Ingresos</div>
+      <div id="ingresos-rows">
+        <div class="budget-row">
+          <input placeholder="Descripción" class="desc-input">
+          <input type="number" placeholder="$ Valor" class="val-input" oninput="calcBudget()">
+        </div>
+      </div>
+      <button class="add-row-btn" onclick="addRow('ingresos-rows')">+ Agregar ingreso</button>
+    </div>
+    <div class="budget-section">
+      <div class="budget-section-title">❌ Gastos</div>
+      <div id="gastos-rows">
+        <div class="budget-row">
+          <input placeholder="Descripción" class="desc-input">
+          <input type="number" placeholder="$ Valor" class="val-input" oninput="calcBudget()">
+        </div>
+      </div>
+      <button class="add-row-btn" onclick="addRow('gastos-rows')">+ Agregar gasto</button>
+    </div>
+  </div>
+  <div class="budget-summary">
+    <div class="budget-summary-row"><span>Total Ingresos</span><span class="amount-pos" id="b-ing">$0</span></div>
+    <div class="budget-summary-row"><span>Total Gastos</span><span class="amount-neg" id="b-gas">$0</span></div>
+    <div class="budget-summary-row"><span>Balance del mes</span><span id="b-bal">$0</span></div>
+  </div>
+  <div style="margin-top:16px;font-size:13px;color:var(--muted);" id="budget-tip"></div>
+</div>
+
+<!-- ══════════════════ TUTOR IA ══════════════════ -->
+<div id="tutor" class="section">
+  <div class="section-title">Tutor IA de Finanzas</div>
+  <div class="section-sub">Pregunta lo que quieras sobre dinero, ahorro, crédito o inversiones</div>
+  <div class="chat-wrap">
+    <div class="chat-header">
+      <div class="chat-avatar">🧑‍🏫</div>
+      <div>
+        <div class="chat-name">ProfeFinanzas</div>
+        <div class="chat-status">En línea</div>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg msg-bot">
+        <div class="msg-bubble">¡Hola! Soy tu tutor de finanzas personales 💰 Puedes preguntarme sobre ahorro, crédito, presupuesto, inversiones, CDTs, interés compuesto… ¡lo que necesites!</div>
+        <div class="msg-time">Ahora</div>
+      </div>
+    </div>
+    <div class="quick-btns">
+      <button class="qbtn" onclick="quickQ('¿Qué es el interés compuesto?')">Interés compuesto</button>
+      <button class="qbtn" onclick="quickQ('¿Cómo empiezo a ahorrar si gano poco?')">Ahorrar con poco</button>
+      <button class="qbtn" onclick="quickQ('¿Qué es un CDT en Colombia?')">CDT Colombia</button>
+      <button class="qbtn" onclick="quickQ('¿Cómo funciona una tarjeta de crédito?')">Tarjeta crédito</button>
+      <button class="qbtn" onclick="quickQ('¿Qué es el historial crediticio?')">Historial crediticio</button>
+    </div>
+    <div class="chat-input-row">
+      <input class="chat-input" id="chat-input" placeholder="Escribe tu pregunta..." onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="chat-send" onclick="sendChat()">➤</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ QUIZ ══════════════════ -->
+<div id="quiz" class="section">
+  <div class="section-title">Quiz de Finanzas</div>
+  <div class="section-sub">Pon a prueba lo que aprendiste — gana XP con cada respuesta correcta</div>
+  <div id="quiz-module-select">
+    <p style="color:var(--muted);margin-bottom:16px;font-size:14px;">Elige el tema del quiz:</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="startQuiz(0)">💰 El Dinero</button>
+      <button class="btn-primary" onclick="startQuiz(1)">🏦 El Ahorro</button>
+      <button class="btn-primary" onclick="startQuiz(2)">📊 Presupuesto</button>
+      <button class="btn-primary" onclick="startQuiz(3)">💳 Crédito</button>
+      <button class="btn-primary" onclick="startQuiz(4)">🛡️ Seguros</button>
+      <button class="btn-primary" onclick="startQuiz(5)">📈 Inversión</button>
+      <button class="btn-ghost" onclick="startQuiz('all')">🎲 Todos los temas</button>
+    </div>
+  </div>
+  <div id="quiz-area" style="display:none;"></div>
+</div>
+
+<!-- ══════════════════ LOGROS ══════════════════ -->
+<div id="logros" class="section">
+  <div class="section-title">Mis Logros</div>
+  <div class="section-sub">Desbloquea insignias a medida que aprendes</div>
+  <div class="logros-grid" id="logros-grid"></div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   DATA: MÓDULOS Y LECCIONES
+═══════════════════════════════════════════ */
+const MODULES = [
+  {
+    id:0, icon:'💰', title:'El Dinero', color:'#F5C842', tag:'MÓDULO 1',
+    desc:'Entiende qué es el dinero, cómo funciona el sistema financiero colombiano y por qué es importante educarse financieramente.',
+    lessons:2,
+    content:`
+      <h3>¿Qué es el dinero?</h3>
+      <p>El dinero es un instrumento de intercambio que todos aceptamos para comprar bienes y servicios. No tiene valor por sí mismo, sino porque la sociedad confía en él. En Colombia, el Banco de la República es quien emite los billetes y monedas.</p>
+      <div class="tip-box"><strong>💡 Dato clave:</strong> Antes del dinero existía el trueque: cambiar productos directamente. Imagina cambiar 10 gallinas por un par de zapatos. ¡Complicado, verdad?</div>
+      <h3>Funciones del dinero</h3>
+      <ul>
+        <li><strong>Medio de intercambio:</strong> Lo usamos para comprar y vender.</li>
+        <li><strong>Unidad de cuenta:</strong> Medimos el valor de las cosas en pesos.</li>
+        <li><strong>Reserva de valor:</strong> Podemos guardarlo para usarlo después.</li>
+      </ul>
+      <h3>El sistema financiero colombiano</h3>
+      <p>El sistema financiero es el conjunto de instituciones que mueven el dinero en un país. En Colombia está regulado por la Superintendencia Financiera y el Banco de la República.</p>
+      <ul>
+        <li><strong>Bancos:</strong> Reciben depósitos y prestan dinero (Bancolombia, Davivienda, BBVA…).</li>
+        <li><strong>Cooperativas:</strong> Entidades sin ánimo de lucro de sus propios socios.</li>
+        <li><strong>Comisionistas de bolsa:</strong> Intermediarios en inversiones.</li>
+        <li><strong>Aseguradoras:</strong> Ofrecen seguros contra riesgos.</li>
+      </ul>
+      <div class="tip-box"><strong>💡 Regla de oro:</strong> Antes de poner tu dinero en cualquier entidad, verifica que esté vigilada por la Superfinanciera en <em>superfinanciera.gov.co</em>.</div>
+      <h3>Inflación: el enemigo silencioso</h3>
+      <p>La inflación es el aumento generalizado de precios. Si la inflación es del 10% anual y tus ahorros no ganan intereses, en un año puedes comprar menos con el mismo dinero. Por eso es crucial que tu dinero genere rendimientos por encima de la inflación.</p>
+    `
+  },
+  {
+    id:1, icon:'🏦', title:'El Ahorro', color:'#22C55E', tag:'MÓDULO 2',
+    desc:'Desarrolla el hábito del ahorro con estrategias prácticas adaptadas a tu realidad.',
+    lessons:3,
+    content:`
+      <h3>¿Por qué ahorrar?</h3>
+      <p>El ahorro es la base de la libertad financiera. Te permite enfrentar emergencias, alcanzar metas y dejar de vivir al día. La diferencia entre quien ahorra y quien no es simple: el primero elige su futuro, el segundo lo padece.</p>
+      <div class="tip-box"><strong>💡 Principio fundamental:</strong> Págate primero a ti mismo. Apenas recibas tu ingreso, aparta el porcentaje de ahorro antes de gastar en cualquier cosa.</div>
+      <h3>Estrategias de ahorro</h3>
+      <ul>
+        <li><strong>Método 50/30/20:</strong> 50% necesidades, 30% deseos, 20% ahorro e inversión.</li>
+        <li><strong>Ahorro automático:</strong> Programa una transferencia automática el día de pago.</li>
+        <li><strong>El reto del ahorro:</strong> Empieza con $1.000 y aumenta $1.000 cada semana durante 52 semanas.</li>
+        <li><strong>Regla de las 24 horas:</strong> Antes de comprar algo no esencial, espera un día para decidir.</li>
+        <li><strong>Elimina gastos hormiga:</strong> Esos pequeños gastos diarios (tinto, snacks, suscripciones) que suman mucho al mes.</li>
+      </ul>
+      <h3>Tipos de cuentas de ahorro en Colombia</h3>
+      <ul>
+        <li><strong>Cuenta de ahorros tradicional:</strong> Disponible en todos los bancos, con intereses bajos.</li>
+        <li><strong>CDT (Certificado de Depósito a Término):</strong> Mayor tasa pero el dinero queda bloqueado por un plazo.</li>
+        <li><strong>Fondo de inversión colectiva (FIC):</strong> Una canasta de activos que puede dar mejores rendimientos.</li>
+        <li><strong>Alcancías digitales:</strong> Apps como Nequi o Daviplata tienen "bolsillos" para metas de ahorro.</li>
+      </ul>
+      <h3>El interés compuesto: la magia del tiempo</h3>
+      <p>Albert Einstein llamó al interés compuesto "la octava maravilla del mundo". Significa que ganas intereses sobre tus intereses. Si ahorras $100.000 mensuales a una tasa del 6% anual durante 20 años, no tendrás $24 millones sino ¡más de $46 millones!</p>
+      <div class="tip-box"><strong>💡 Empieza hoy:</strong> El tiempo es el factor más importante del ahorro. Empezar a los 18 años vs los 30 años puede significar el doble del dinero acumulado a los 60.</div>
+    `
+  },
+  {
+    id:2, icon:'📊', title:'Presupuesto', color:'#3B82F6', tag:'MÓDULO 3',
+    desc:'Aprende a planear tus finanzas mes a mes y tener control total sobre tu dinero.',
+    lessons:2,
+    content:`
+      <h3>¿Qué es un presupuesto?</h3>
+      <p>Un presupuesto es un plan para tu dinero. Te dice de antemano cómo vas a usar cada peso que entra. Sin presupuesto, el dinero simplemente "desaparece" sin saber en qué se fue.</p>
+      <h3>Pasos para hacer tu presupuesto</h3>
+      <ul>
+        <li><strong>1. Anota todos tus ingresos:</strong> Sueldo, trabajos extras, mesada, arriendos, todo.</li>
+        <li><strong>2. Lista todos tus gastos fijos:</strong> Arriendo, servicios, transporte, deudas.</li>
+        <li><strong>3. Estima gastos variables:</strong> Comida, entretenimiento, ropa.</li>
+        <li><strong>4. Aparta el ahorro PRIMERO.</li>
+        <li><strong>5. Ajusta:</strong> Si los gastos superan los ingresos, identifica qué puedes reducir.</li>
+      </ul>
+      <div class="tip-box"><strong>💡 La regla de oro:</strong> Gastos ≤ Ingresos − Ahorro. Si no te queda para el ahorro, reduce gastos. Nunca sacrifiques el ahorro.</div>
+      <h3>Categorías de gastos</h3>
+      <ul>
+        <li><strong>Necesidades (no negociables):</strong> Comida, vivienda, salud, transporte básico.</li>
+        <li><strong>Deseos (negociables):</strong> Entretenimiento, ropa de marca, comer afuera.</li>
+        <li><strong>Deudas:</strong> Cuotas de créditos, préstamos.</li>
+        <li><strong>Ahorro e inversión:</strong> Tu futuro yo te lo agradecerá.</li>
+      </ul>
+      <h3>Herramientas para controlar gastos</h3>
+      <p>Puedes usar una libreta, Excel, o apps como Wallet, Finerio, o simplemente la calculadora. Lo importante es hacerlo de forma consistente, idealmente registrando cada gasto el mismo día.</p>
+      <div class="tip-box"><strong>💡 Truco:</strong> Revisa tu presupuesto cada domingo. 5 minutos semanales pueden salvarte de sorpresas a fin de mes.</div>
+    `
+  },
+  {
+    id:3, icon:'💳', title:'Crédito', color:'#EF4444', tag:'MÓDULO 4',
+    desc:'Usa el crédito como herramienta, no como trampa. Entiende tasas, historial y deudas.',
+    lessons:3,
+    content:`
+      <h3>¿Qué es el crédito?</h3>
+      <p>El crédito es dinero que te presta una entidad con el compromiso de devolverlo más un costo llamado interés. Bien usado, el crédito te permite lograr metas que tardarías años en alcanzar ahorrando. Mal usado, puede destruir tu estabilidad financiera.</p>
+      <h3>Tipos de crédito en Colombia</h3>
+      <ul>
+        <li><strong>Crédito de consumo:</strong> Para comprar bienes o servicios (electrodomésticos, viajes).</li>
+        <li><strong>Crédito hipotecario:</strong> Para comprar vivienda. Plazos hasta 30 años.</li>
+        <li><strong>Crédito libre inversión:</strong> Sin destinación específica.</li>
+        <li><strong>Tarjeta de crédito:</strong> Crédito rotativo, muy cómodo pero potencialmente peligroso.</li>
+        <li><strong>Microcrédito:</strong> Para pequeños emprendedores.</li>
+      </ul>
+      <h3>Tasas de interés: lo que debes entender</h3>
+      <ul>
+        <li><strong>Tasa nominal:</strong> La que anuncia el banco.</li>
+        <li><strong>Tasa efectiva anual (EA):</strong> El costo real incluyendo capitalización.</li>
+        <li><strong>Usura:</strong> El límite máximo legal que puede cobrar un banco (publicado mensualmente por la Superfinanciera).</li>
+      </ul>
+      <div class="tip-box"><strong>💡 Advertencia:</strong> Un crédito "gota a gota" puede tener tasas de hasta el 200% EA. Son ilegales y muy peligrosos. Nunca los uses.</div>
+      <h3>El historial crediticio (Centrales de riesgo)</h3>
+      <p>En Colombia, Datacrédito y TransUnion registran tu comportamiento de pago. Un buen historial te abre puertas; un mal historial te las cierra. Para construir un buen historial:</p>
+      <ul>
+        <li>Paga siempre a tiempo, aunque sea el mínimo.</li>
+        <li>No uses más del 30% del cupo de tu tarjeta.</li>
+        <li>No solicites muchos créditos al mismo tiempo.</li>
+        <li>Revisa tu historial gratis en <em>midatacredito.com</em>.</li>
+      </ul>
+    `
+  },
+  {
+    id:4, icon:'🛡️', title:'Seguros', color:'#A855F7', tag:'MÓDULO 5',
+    desc:'Aprende a proteger tu patrimonio y tu familia con los seguros correctos.',
+    lessons:2,
+    content:`
+      <h3>¿Qué es un seguro?</h3>
+      <p>Un seguro es un contrato donde pagas una prima periódica y, a cambio, una aseguradora te cubre ante pérdidas o daños específicos. Es como una red de seguridad para tu vida financiera.</p>
+      <div class="tip-box"><strong>💡 Concepto clave:</strong> Los seguros no son un gasto, son una inversión en protección. Un solo siniestro sin seguro puede borrar años de ahorro.</div>
+      <h3>Tipos de seguros principales</h3>
+      <ul>
+        <li><strong>Seguro de vida:</strong> Protege a tu familia si faltas. Es el más importante si tienes dependientes.</li>
+        <li><strong>Seguro de salud (medicina prepagada):</strong> Complementa el sistema de salud obligatorio (EPS).</li>
+        <li><strong>Seguro de automóvil:</strong> Obligatorio el SOAT; el seguro todo riesgo es opcional pero recomendado.</li>
+        <li><strong>Seguro de hogar:</strong> Cubre tu vivienda y contenido contra daños, robo e incendio.</li>
+        <li><strong>Seguro de desempleo:</strong> Te paga cuotas de crédito si pierdes el trabajo.</li>
+      </ul>
+      <h3>¿Cómo elegir un seguro?</h3>
+      <ul>
+        <li>Compara precios en el mercado (Sura, Bolívar, Allianz, Liberty, etc.).</li>
+        <li>Lee las exclusiones del contrato (lo que NO cubre).</li>
+        <li>Verifica que la aseguradora esté vigilada por la Superfinanciera.</li>
+        <li>Adapta la cobertura a tu situación real (no pagues por lo que no necesitas).</li>
+      </ul>
+      <h3>Seguros obligatorios en Colombia</h3>
+      <ul>
+        <li><strong>SOAT:</strong> Seguro obligatorio de accidentes de tránsito.</li>
+        <li><strong>ARL:</strong> Administradora de Riesgos Laborales (para empleados).</li>
+        <li><strong>Fondo de solidaridad pensional:</strong> Para pensión futura.</li>
+      </ul>
+    `
+  },
+  {
+    id:5, icon:'📈', title:'Inversión', color:'#F97316', tag:'MÓDULO 6',
+    desc:'Haz que tu dinero genere más dinero. Conoce opciones de inversión en Colombia.',
+    lessons:3,
+    content:`
+      <h3>¿Qué es invertir?</h3>
+      <p>Invertir es poner tu dinero a trabajar para generar rendimientos mayores a la inflación. La diferencia entre ahorrar e invertir es el riesgo: al invertir aceptas cierto nivel de riesgo a cambio de mayor rentabilidad potencial.</p>
+      <h3>Opciones de inversión en Colombia</h3>
+      <ul>
+        <li><strong>CDT (Certificado de Depósito a Término):</strong> Bajo riesgo, tasa fija. Ideal para principiantes. Tasas entre 10-14% EA actualmente.</li>
+        <li><strong>Fondos de inversión colectiva (FIC):</strong> Tu dinero se mezcla con el de otros inversores. Más diversificación.</li>
+        <li><strong>Bolsa de Valores (BVC):</strong> Compra acciones de empresas colombianas (Ecopetrol, Bancolombia, Grupo Éxito).</li>
+        <li><strong>Finca raíz:</strong> Bienes inmuebles. Alta rentabilidad a largo plazo pero requiere mucho capital.</li>
+        <li><strong>ETFs y acciones internacionales:</strong> A través de plataformas como Trii o Skandia puedes invertir en el exterior.</li>
+        <li><strong>Emprendimiento:</strong> Invertir en tu propio negocio puede dar la mayor rentabilidad, pero también el mayor riesgo.</li>
+      </ul>
+      <div class="tip-box"><strong>💡 Regla de diversificación:</strong> "No pongas todos los huevos en la misma canasta." Distribuye tu inversión entre diferentes tipos de activos.</div>
+      <h3>La pirámide de inversión</h3>
+      <ul>
+        <li><strong>Base (obligatorio):</strong> Fondo de emergencia (3-6 meses de gastos en una cuenta líquida).</li>
+        <li><strong>Nivel 2:</strong> CDTs, FICs de renta fija (bajo riesgo).</li>
+        <li><strong>Nivel 3:</strong> Acciones, FICs de renta variable (riesgo moderado).</li>
+        <li><strong>Cima (opcional):</strong> Criptomonedas, startups (alto riesgo, solo con lo que puedas perder).</li>
+      </ul>
+      <div class="tip-box"><strong>⚠️ Advertencia:</strong> Desconfía de cualquier negocio que ofrezca rentabilidades superiores al 5% mensual. Probablemente es una pirámide (como el caso DRFE o Grupos de WhatsApp). En Colombia son ilegales.</div>
+    `
+  }
+];
+
+/* ═══════════════════════════════════════════
+   DATA: QUIZ
+═══════════════════════════════════════════ */
+const QUIZ_DATA = [
+  // MÓDULO 0: Dinero
+  {m:0,q:"¿Qué institución emite los billetes y monedas en Colombia?",opts:["Banco Davivienda","El Banco de la República","La Superfinanciera","El Ministerio de Hacienda"],a:1,exp:"El Banco de la República es el banco central de Colombia y el único autorizado para emitir dinero."},
+  {m:0,q:"¿Cuál de estas NO es una función del dinero?",opts:["Medio de intercambio","Unidad de cuenta","Fuente de felicidad","Reserva de valor"],a:2,exp:"Las funciones del dinero son: medio de intercambio, unidad de cuenta y reserva de valor. La felicidad no depende del dinero."},
+  {m:0,q:"La inflación significa que...",opts:["Los bancos ganan más dinero","Los precios suben y el dinero pierde poder de compra","El gobierno imprime menos billetes","Las tasas de interés bajan"],a:1,exp:"La inflación es el aumento generalizado de precios, lo que hace que con el mismo dinero puedas comprar menos."},
+  {m:0,q:"¿Qué entidad vigila a los bancos en Colombia?",opts:["La DIAN","La Contraloría","La Superintendencia Financiera","El Banco Mundial"],a:2,exp:"La Superintendencia Financiera de Colombia (Superfinanciera) regula y supervisa el sistema financiero."},
+  {m:0,q:"¿Qué era el trueque?",opts:["Un tipo de moneda antigua","Intercambiar bienes sin usar dinero","Un banco colonial","Una forma de inversión"],a:1,exp:"El trueque es el intercambio directo de bienes o servicios sin usar dinero como intermediario."},
+  // MÓDULO 1: Ahorro
+  {m:1,q:"Según la regla 50/30/20, ¿qué porcentaje se destina al ahorro?",opts:["50%","30%","20%","10%"],a:2,exp:"La regla 50/30/20 destina: 50% a necesidades, 30% a deseos y 20% a ahorro e inversión."},
+  {m:1,q:"¿Qué es el interés compuesto?",opts:["Intereses muy altos","Ganar intereses sobre los intereses acumulados","Un tipo de deuda","Una cuenta bancaria especial"],a:1,exp:"El interés compuesto es ganar rendimientos sobre el capital Y sobre los intereses ya generados. Por eso el tiempo es tan valioso."},
+  {m:1,q:"¿Cuál es el principio de 'págate primero'?",opts:["Comprar lo que necesitas antes de pagar deudas","Apartar el ahorro antes de gastar en cualquier otra cosa","Pagar el crédito antes del arriendo","Gastar en gustos antes de pagar servicios"],a:1,exp:"'Págate primero' significa que apenas recibes tu ingreso, apartas el porcentaje de ahorro antes de cualquier gasto."},
+  {m:1,q:"¿Cuál de estas opciones ofrece mayor tasa de interés pero bloquea el dinero por un plazo?",opts:["Cuenta de ahorros","Cuenta corriente","CDT","Billetera digital"],a:2,exp:"El CDT (Certificado de Depósito a Término) ofrece tasas más altas que una cuenta de ahorros, pero el dinero queda inmovilizado durante el plazo pactado."},
+  {m:1,q:"Un 'gasto hormiga' es...",opts:["El arriendo mensual","Pequeños gastos diarios que suman mucho","Los servicios públicos","El pago de la EPS"],a:1,exp:"Los gastos hormiga son pequeños gastos cotidianos (tintos, snacks, apps) que individualmente parecen insignificantes pero al sumarlos en el mes son una cantidad considerable."},
+  // MÓDULO 2: Presupuesto
+  {m:2,q:"¿Cuál es el primer paso para hacer un presupuesto?",opts:["Listar los gastos del mes anterior","Calcular cuánto puedes pedir prestado","Anotar todos los ingresos","Ir al banco"],a:2,exp:"El primer paso siempre es conocer exactamente cuánto dinero entra. Sin conocer los ingresos, no puedes planear los gastos."},
+  {m:2,q:"¿Qué significa tener un déficit en el presupuesto?",opts:["Tener más ingresos que gastos","Gastos mayores a los ingresos","Tener ahorros extra","Que el banco te prestó dinero"],a:1,exp:"Un déficit significa que estás gastando más de lo que ganas, lo que lleva al endeudamiento si no se corrige."},
+  {m:2,q:"¿Cuál de estos es un gasto fijo?",opts:["Comer en restaurante","El arriendo mensual","Ir al cine","Ropa nueva"],a:1,exp:"Los gastos fijos son los que se repiten con el mismo valor cada mes: arriendo, servicios, cuotas de crédito."},
+  {m:2,q:"¿Con qué frecuencia se recomienda revisar el presupuesto?",opts:["Una vez al año","Solo cuando hay problemas","Semanalmente","Cada 5 años"],a:2,exp:"Revisar el presupuesto cada semana (5 minutos los domingos) permite detectar desviaciones antes de que se conviertan en problemas."},
+  {m:2,q:"La regla de las 24 horas para compras significa...",opts:["Comprar solo en horario bancario","Esperar un día antes de comprar algo no esencial","Hacer todas las compras del mes en un día","Pagar a 24 cuotas"],a:1,exp:"Esperar 24 horas antes de comprar algo no planeado te da tiempo para evaluar si realmente lo necesitas o es un impulso."},
+  // MÓDULO 3: Crédito
+  {m:3,q:"¿Qué es la tasa de usura en Colombia?",opts:["La tasa de los CDTs","El límite máximo legal de interés que puede cobrar un banco","La tasa del Banco de la República","El interés mínimo por ley"],a:1,exp:"La tasa de usura es el máximo interés permitido por ley, publicada mensualmente por la Superfinanciera. Cobrar por encima es ilegal."},
+  {m:3,q:"¿Qué porcentaje máximo del cupo de tarjeta de crédito se recomienda usar?",opts:["100%","50%","30%","80%"],a:2,exp:"Usar máximo el 30% del cupo disponible protege tu historial crediticio y muestra que tienes control sobre tus deudas."},
+  {m:3,q:"¿Dónde puedes consultar tu historial crediticio gratis en Colombia?",opts:["Davivienda.com","Midatacredito.com","DIAN.gov.co","Superfinanciera.gov.co"],a:1,exp:"En midatacredito.com puedes consultar tu historia de crédito de forma gratuita una vez al mes."},
+  {m:3,q:"Un crédito 'gota a gota' es...",opts:["Un crédito hipotecario","Un microcrédito bancario","Un préstamo informal e ilegal con tasas altísimas","Un CDT de corto plazo"],a:2,exp:"El 'gota a gota' es un préstamo informal con tasas usureras, generalmente manejado por grupos ilegales. Puede llegar al 200% EA o más."},
+  {m:3,q:"¿Qué efecto tiene en tu historial pagar siempre a tiempo?",opts:["Ninguno","Lo perjudica","Lo mejora, facilitando futuros créditos","Solo importa para créditos hipotecarios"],a:2,exp:"El pago puntual mejora tu historial crediticio en centrales como Datacrédito, lo que te permite acceder a mejores condiciones en el futuro."},
+  // MÓDULO 4: Seguros
+  {m:4,q:"¿Qué es el SOAT?",opts:["Un seguro voluntario de vida","El seguro obligatorio de accidentes de tránsito","Una pensión voluntaria","Un fondo de inversión"],a:1,exp:"El SOAT (Seguro Obligatorio de Accidentes de Tránsito) es de porte obligatorio para todo vehículo que circule en Colombia."},
+  {m:4,q:"¿Qué es la prima de un seguro?",opts:["El pago que hace la aseguradora cuando ocurre el siniestro","El monto de la cobertura","El pago periódico que tú haces para mantener el seguro","El deducible"],a:2,exp:"La prima es el costo que pagas periódicamente (mensual, semestral o anual) para mantener vigente el seguro."},
+  {m:4,q:"¿Por qué es importante leer las exclusiones de un seguro?",opts:["Para saber cuánto cuesta","Para entender qué situaciones NO cubre el seguro","Para conocer el nombre de la aseguradora","Para saber cuándo vence"],a:1,exp:"Las exclusiones son las situaciones en las que el seguro NO paga. Conocerlas evita sorpresas desagradables cuando más lo necesitas."},
+  {m:4,q:"¿Cuál es el seguro más importante si tienes familia que depende de ti?",opts:["Seguro de automóvil","Seguro de hogar","Seguro de vida","Seguro de viaje"],a:2,exp:"El seguro de vida protege económicamente a tus seres queridos en caso de que faltes. Si alguien depende de tus ingresos, es el más prioritario."},
+  {m:4,q:"¿Cómo verificas que una aseguradora es legítima en Colombia?",opts:["Preguntando a amigos","Buscando en Google","Verificando en la Superfinanciera","Con la DIAN"],a:2,exp:"La Superintendencia Financiera publica en su sitio web el listado de todas las entidades vigiladas y autorizadas para operar."},
+  // MÓDULO 5: Inversión
+  {m:5,q:"¿Qué significa diversificar las inversiones?",opts:["Poner todo el dinero en el activo más rentable","Invertir en un solo tipo de producto","Distribuir el dinero en diferentes activos para reducir el riesgo","Cambiar de banco frecuentemente"],a:2,exp:"Diversificar significa no poner todos los huevos en la misma canasta. Si un activo cae, los otros pueden compensar la pérdida."},
+  {m:5,q:"¿Qué debe tener todo inversor ANTES de invertir?",opts:["Un crédito bancario","Un fondo de emergencia de 3-6 meses de gastos","Una tarjeta de crédito","Acciones en bolsa"],a:1,exp:"El fondo de emergencia es la base de la pirámide de inversión. Sin él, cualquier imprevisto te obligaría a vender tus inversiones en el peor momento."},
+  {m:5,q:"Una rentabilidad del 10% mensual ofrecida por desconocidos probablemente es...",opts:["Una oportunidad excelente","Una pirámide o estafa financiera","Un CDT especial","Un fondo del gobierno"],a:1,exp:"Tasas tan altas son señal de alerta de pirámides o Ponzi. En Colombia, esquemas como el DRFE (DMG) arruinaron a miles de personas. Siempre desconfía."},
+  {m:5,q:"¿Qué es un CDT?",opts:["Una cuenta de débito tecnológica","Un certificado de inversión a plazo fijo con tasa garantizada","Un fondo de acciones","Una criptomoneda"],a:1,exp:"El CDT (Certificado de Depósito a Término) es un producto bancario donde depositas dinero por un plazo fijo a cambio de una tasa de interés garantizada."},
+  {m:5,q:"¿En qué bolsa de valores se negocian acciones colombianas?",opts:["NYSE","NASDAQ","BVC (Bolsa de Valores de Colombia)","Euronext"],a:2,exp:"La BVC (Bolsa de Valores de Colombia) es donde se negocian acciones de empresas colombianas como Ecopetrol, Bancolombia, Grupo Nutresa, entre otras."},
+];
+
+/* ═══════════════════════════════════════════
+   LOGROS
+═══════════════════════════════════════════ */
+const LOGROS = [
+  {id:'first_lesson',icon:'📖',title:'Primer Paso',desc:'Lee tu primer módulo',xp:50},
+  {id:'all_modules',icon:'🎓',title:'Estudiante Completo',desc:'Lee los 6 módulos',xp:300},
+  {id:'first_quiz',icon:'🎯',title:'Primera Prueba',desc:'Completa tu primer quiz',xp:100},
+  {id:'perfect_quiz',icon:'⭐',title:'Perfecto!',desc:'Quiz con 100% de aciertos',xp:200},
+  {id:'saver',icon:'🏦',title:'Ahorrador',desc:'Usa el simulador de ahorro',xp:50},
+  {id:'budgeter',icon:'📊',title:'Presupuestador',desc:'Usa el presupuesto personal',xp:50},
+  {id:'asked_tutor',icon:'🤖',title:'Curioso Digital',desc:'Pregunta algo al Tutor IA',xp:75},
+  {id:'xp500',icon:'🚀',title:'En Órbita',desc:'Acumula 500 XP',xp:100},
+  {id:'xp1000',icon:'💎',title:'Experto Financiero',desc:'Acumula 1000 XP',xp:200},
+];
+
+/* ═══════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════ */
+let state = JSON.parse(localStorage.getItem('finanzasya_state')||'{}');
+state.xp = state.xp||0;
+state.unlocked = state.unlocked||[];
+state.completedModules = state.completedModules||[];
+state.quizScores = state.quizScores||{};
+
+function saveState(){localStorage.setItem('finanzasya_state',JSON.stringify(state));}
+
+function addXP(n){
+  state.xp+=n;
+  document.getElementById('xp-display').textContent=state.xp;
+  checkXPLogros();
+  saveState();
+}
+
+function unlockLogro(id){
+  if(state.unlocked.includes(id))return;
+  const l=LOGROS.find(x=>x.id===id);
+  if(!l)return;
+  state.unlocked.push(id);
+  addXP(l.xp);
+  showToast(`🏆 Logro desbloqueado: ${l.title} (+${l.xp} XP)`);
+  renderLogros();
+}
+
+function checkXPLogros(){
+  if(state.xp>=500)unlockLogro('xp500');
+  if(state.xp>=1000)unlockLogro('xp1000');
+}
+
+function showToast(msg){
+  let t=document.createElement('div');
+  t.textContent=msg;
+  Object.assign(t.style,{
+    position:'fixed',bottom:'90px',left:'50%',transform:'translateX(-50%)',
+    background:'#1E2230',border:'1px solid #F5C842',color:'#F5C842',
+    padding:'10px 20px',borderRadius:'8px',fontSize:'13px',fontWeight:'600',
+    zIndex:'999',boxShadow:'0 4px 20px rgba(0,0,0,.5)',
+    transition:'opacity .5s',fontFamily:'Space Grotesk,sans-serif'
+  });
+  document.body.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';setTimeout(()=>t.remove(),500);},3000);
+}
+
+/* ═══════════════════════════════════════════
+   NAV
+═══════════════════════════════════════════ */
+const SECTIONS=['home','modulos','simuladores','presupuesto','tutor','quiz','logros'];
+function showSection(id){
+  SECTIONS.forEach(s=>{
+    const el=document.getElementById(s);
+    if(el)el.classList.remove('visible');
+  });
+  document.getElementById('lesson-view').style.display='none';
+  const target=document.getElementById(id);
+  if(target)target.classList.add('visible');
+  // nav tabs
+  document.querySelectorAll('.nav-tab,.mob-tab').forEach(t=>{
+    t.classList.remove('active');
+    if(t.getAttribute('onclick')&&t.getAttribute('onclick').includes(`'${id}'`))t.classList.add('active');
+  });
+  window.scrollTo(0,0);
+}
+
+/* ═══════════════════════════════════════════
+   RENDER MODULES
+═══════════════════════════════════════════ */
+function renderModules(){
+  const grid=document.getElementById('modules-list');
+  grid.innerHTML='';
+  MODULES.forEach(m=>{
+    const done=state.completedModules.includes(m.id);
+    const progress=done?100:0;
+    const card=document.createElement('div');
+    card.className='module-card';
+    card.style.setProperty('--card-accent',m.color);
+    card.innerHTML=`
+      <div class="module-icon">${m.icon}</div>
+      <div class="module-title">${m.title}</div>
+      <div class="module-desc">${m.desc}</div>
+      <div class="module-meta">
+        <span class="module-tag">${m.tag}</span>
+        ${done?'<span class="chip">✅ Completado</span>':''}
+      </div>
+      <div class="module-progress-bar"><div class="module-progress-fill" style="width:${progress}%"></div></div>
+    `;
+    card.onclick=()=>openLesson(m.id);
+    grid.appendChild(card);
+  });
+}
+
+/* ═══════════════════════════════════════════
+   LESSON
+═══════════════════════════════════════════ */
+function openLesson(id){
+  const m=MODULES[id];
+  document.getElementById('lesson-tag').textContent=m.tag+' — '+m.icon+' '+m.title;
+  document.getElementById('lesson-h1').textContent=m.title.toUpperCase();
+  document.getElementById('lesson-body').innerHTML=m.content;
+  // hide all sections
+  SECTIONS.forEach(s=>{const el=document.getElementById(s);if(el)el.classList.remove('visible');});
+  document.getElementById('lesson-view').style.display='block';
+  document.getElementById('lesson-view').classList.add('visible');
+  window.scrollTo(0,0);
+  // mark completed
+  if(!state.completedModules.includes(id)){
+    state.completedModules.push(id);
+    addXP(100);
+    unlockLogro('first_lesson');
+    if(state.completedModules.length===6)unlockLogro('all_modules');
+    saveState();
+    renderModules();
+  }
+  // store current module for quiz
+  window._currentModule=id;
+}
+
+function closelesson(){
+  document.getElementById('lesson-view').style.display='none';
+  showSection('modulos');
+}
+
+function goQuiz(){
+  const mod=window._currentModule!=null?window._currentModule:0;
+  showSection('quiz');
+  startQuiz(mod);
+}
+
+/* ═══════════════════════════════════════════
+   SIMULADORES
+═══════════════════════════════════════════ */
+const fmt=n=>'$'+Math.round(n).toLocaleString('es-CO');
+
+function showSimResult(id,rows){
+  const el=document.getElementById(id);
+  el.style.display='block';
+  el.innerHTML=rows.map((r,i)=>`<div class="sim-result-row"><span class="sim-result-label">${r[0]}</span><span>${r[1]}</span></div>`).join('');
+  unlockLogro('saver');
+}
+
+function calcAhorro(){
+  const mes=+document.getElementById('s-ahorro-mes').value||100000;
+  const tasa=+document.getElementById('s-ahorro-tasa').value/100/12;
+  const n=+document.getElementById('s-ahorro-años').value*12;
+  const fv=tasa>0?mes*(Math.pow(1+tasa,n)-1)/tasa:mes*n;
+  const aportado=mes*n;
+  showSimResult('res-ahorro',[
+    ['Total aportado',fmt(aportado)],
+    ['Intereses ganados',fmt(fv-aportado)],
+    ['Total acumulado',fmt(fv)]
+  ]);
+}
+
+function calcCredito(){
+  const P=+document.getElementById('s-cred-monto').value||5000000;
+  const r=+document.getElementById('s-cred-tasa').value/100;
+  const n=+document.getElementById('s-cred-plazo').value||24;
+  const cuota=r>0?P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1):P/n;
+  const total=cuota*n;
+  showSimResult('res-credito',[
+    ['Cuota mensual',fmt(cuota)],
+    ['Total a pagar',fmt(total)],
+    ['Intereses totales',fmt(total-P)]
+  ]);
+}
+
+function calc5020(){
+  const ing=+document.getElementById('s-5020-ing').value||1300000;
+  showSimResult('res-5020',[
+    ['50% Necesidades (arriendo, comida, transporte)',fmt(ing*.5)],
+    ['30% Deseos (entretenimiento, ropa, salidas)',fmt(ing*.3)],
+    ['20% Ahorro e inversión',fmt(ing*.2)]
+  ]);
+}
+
+function calcMeta(){
+  const total=+document.getElementById('s-meta-total').value||2000000;
+  const mes=+document.getElementById('s-meta-mes').value||200000;
+  if(mes<=0){showSimResult('res-meta',[['Error','Ahorro debe ser mayor a 0']]);return;}
+  const meses=Math.ceil(total/mes);
+  const años=Math.floor(meses/12);const resm=meses%12;
+  const texto=años>0?`${años} año(s) y ${resm} mes(es)`:`${meses} mes(es)`;
+  showSimResult('res-meta',[
+    ['Meta',fmt(total)],
+    ['Ahorro mensual',fmt(mes)],
+    ['Tiempo estimado',texto]
+  ]);
+}
+
+function calcCDT(){
+  const cap=+document.getElementById('s-cdt-cap').value||3000000;
+  const tea=+document.getElementById('s-cdt-tasa').value/100;
+  const dias=+document.getElementById('s-cdt-dias').value||180;
+  const interes=cap*(Math.pow(1+tea,dias/365)-1);
+  const retencion=interes*.04;// 4% retención en la fuente
+  showSimResult('res-cdt',[
+    ['Capital invertido',fmt(cap)],
+    ['Intereses brutos',fmt(interes)],
+    ['Retención en la fuente (4%)',fmt(retencion)],
+    ['Intereses netos',fmt(interes-retencion)],
+    ['Total al vencimiento',fmt(cap+interes-retencion)]
+  ]);
+}
+
+/* ═══════════════════════════════════════════
+   PRESUPUESTO
+═══════════════════════════════════════════ */
+function addRow(containerId){
+  const container=document.getElementById(containerId);
+  const row=document.createElement('div');
+  row.className='budget-row';
+  row.innerHTML=`<input placeholder="Descripción" class="desc-input"><input type="number" placeholder="$ Valor" class="val-input" oninput="calcBudget()">`;
+  container.appendChild(row);
+}
+
+function calcBudget(){
+  let ing=0,gas=0;
+  document.querySelectorAll('#ingresos-rows .val-input').forEach(i=>{ing+=+i.value||0;});
+  document.querySelectorAll('#gastos-rows .val-input').forEach(i=>{gas+=+i.value||0;});
+  const bal=ing-gas;
+  document.getElementById('b-ing').textContent=fmt(ing);
+  document.getElementById('b-gas').textContent=fmt(gas);
+  const balEl=document.getElementById('b-bal');
+  balEl.textContent=fmt(bal);
+  balEl.style.color=bal>=0?'var(--green)':'var(--red)';
+  const tip=document.getElementById('budget-tip');
+  if(ing===0){tip.textContent='';return;}
+  const savRate=bal/ing;
+  if(bal<0)tip.textContent='⚠️ Estás en déficit. Revisa tus gastos y busca cuáles puedes reducir.';
+  else if(savRate<.1)tip.textContent='📌 Tu tasa de ahorro es baja (menos del 10%). Intenta aumentarla.';
+  else if(savRate<.2)tip.textContent='👍 Bien, pero puedes mejorar. Apunta al 20% de ahorro.';
+  else tip.textContent='🎉 Excelente manejo del presupuesto. Tu tasa de ahorro supera el 20%.';
+  unlockLogro('budgeter');
+}
+
+/* ═══════════════════════════════════════════
+   TUTOR IA
+═══════════════════════════════════════════ */
+let chatHistory=[];
+
+function addMsg(role,text){
+  const container=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className=`msg msg-${role==='user'?'user':'bot'}`;
+  const now=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+  div.innerHTML=`<div class="msg-bubble">${text}</div><div class="msg-time">${now}</div>`;
+  container.appendChild(div);
+  container.scrollTop=container.scrollHeight;
+}
+
+function showTyping(){
+  const container=document.getElementById('chat-messages');
+  const div=document.createElement('div');
+  div.className='msg msg-bot';div.id='typing-indicator';
+  div.innerHTML=`<div class="msg-bubble"><div class="typing"><span></span><span></span><span></span></div></div>`;
+  container.appendChild(div);
+  container.scrollTop=container.scrollHeight;
+}
+function hideTyping(){const el=document.getElementById('typing-indicator');if(el)el.remove();}
+
+async function sendChat(){
+  const inp=document.getElementById('chat-input');
+  const text=inp.value.trim();
+  if(!text)return;
+  inp.value='';
+  addMsg('user',text);
+  chatHistory.push({role:'user',content:text});
+  unlockLogro('asked_tutor');
+  showTyping();
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-6',
+        max_tokens:600,
+        system:`Eres ProfeFinanzas, un tutor amigable y entusiasta de educación financiera para jóvenes colombianos. 
+Hablas de forma clara, cercana y con ejemplos de la vida real en Colombia (pesos colombianos, Davivienda, Bancolombia, Nequi, BVC, etc.).
+Explicas conceptos financieros de manera simple sin jerga compleja.
+Usas emojis con moderación. Respondes en máximo 3-4 párrafos cortos.
+Si alguien pregunta por inversiones milagrosas o pirámides, adviertes claramente del riesgo.
+No eres asesor financiero certificado y lo aclaras cuando corresponde.`,
+        messages:chatHistory.slice(-8)
+      })
+    });
+    const data=await resp.json();
+    const reply=data.content?.[0]?.text||'Lo siento, no pude procesar tu pregunta. Intenta de nuevo.';
+    hideTyping();
+    addMsg('bot',reply.replace(/\n/g,'<br>'));
+    chatHistory.push({role:'assistant',content:reply});
+  }catch(e){
+    hideTyping();
+    addMsg('bot','⚠️ Hubo un error de conexión. Por favor intenta de nuevo.');
+  }
+}
+
+function quickQ(q){
+  document.getElementById('chat-input').value=q;
+  sendChat();
+}
+
+/* ═══════════════════════════════════════════
+   QUIZ
+═══════════════════════════════════════════ */
+let quizData=[],quizIdx=0,quizScore=0,quizAnswered=false;
+
+function startQuiz(mod){
+  document.getElementById('quiz-module-select').style.display='none';
+  const data=mod==='all'?[...QUIZ_DATA]:QUIZ_DATA.filter(q=>q.m===mod);
+  quizData=[...data].sort(()=>Math.random()-.5).slice(0,Math.min(data.length,8));
+  quizIdx=0;quizScore=0;
+  renderQuiz();
+}
+
+function renderQuiz(){
+  const area=document.getElementById('quiz-area');
+  area.style.display='block';
+  if(quizIdx>=quizData.length){renderQuizResult();return;}
+  const q=quizData[quizIdx];
+  area.innerHTML=`
+    <div class="quiz-card">
+      <div class="quiz-progress-label">Pregunta ${quizIdx+1} de ${quizData.length}</div>
+      <div class="quiz-progress-track"><div class="quiz-progress-fill" style="width:${(quizIdx/quizData.length)*100}%"></div></div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="options-grid">${q.opts.map((o,i)=>`<button class="option-btn" onclick="selectAnswer(${i})">${o}</button>`).join('')}</div>
+      <div class="quiz-feedback" id="quiz-fb"></div>
+    </div>
+  `;
+  quizAnswered=false;
+}
+
+function selectAnswer(idx){
+  if(quizAnswered)return;
+  quizAnswered=true;
+  const q=quizData[quizIdx];
+  const btns=document.querySelectorAll('.option-btn');
+  btns.forEach((b,i)=>{
+    b.disabled=true;
+    if(i===q.a)b.classList.add('correct');
+    else if(i===idx&&i!==q.a)b.classList.add('wrong');
+  });
+  const fb=document.getElementById('quiz-fb');
+  fb.classList.add('show');
+  if(idx===q.a){
+    quizScore++;
+    fb.classList.add('ok');
+    fb.textContent='✅ ¡Correcto! '+q.exp;
+    addXP(20);
+  }else{
+    fb.classList.add('fail');
+    fb.textContent='❌ La respuesta correcta era: '+q.opts[q.a]+'. '+q.exp;
+  }
+  setTimeout(()=>{quizIdx++;renderQuiz();},2800);
+}
+
+function renderQuizResult(){
+  const area=document.getElementById('quiz-area');
+  const pct=Math.round((quizScore/quizData.length)*100);
+  let emoji=pct>=80?'🏆':pct>=50?'👍':'💪';
+  let msg=pct>=80?'¡Excelente dominio del tema!':pct>=50?'Buen trabajo. Repasa los módulos para mejorar.':'Sigue aprendiendo. Revisa los módulos y vuelve a intentarlo.';
+  area.innerHTML=`
+    <div class="quiz-card quiz-result">
+      <div style="font-size:48px;margin-bottom:12px;">${emoji}</div>
+      <div class="quiz-score">${quizScore}/${quizData.length}</div>
+      <div class="quiz-score-label">${pct}% de aciertos · ${msg}</div>
+      <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap;">
+        <button class="btn-primary" onclick="document.getElementById('quiz-module-select').style.display='block';document.getElementById('quiz-area').style.display='none';">Otro tema</button>
+        <button class="btn-ghost" onclick="showSection('modulos')">Repasar módulos</button>
+      </div>
+    </div>
+  `;
+  unlockLogro('first_quiz');
+  if(pct===100)unlockLogro('perfect_quiz');
+  addXP(pct>=80?50:20);
+  saveState();
+}
+
+/* ═══════════════════════════════════════════
+   LOGROS RENDER
+═══════════════════════════════════════════ */
+function renderLogros(){
+  const grid=document.getElementById('logros-grid');
+  if(!grid)return;
+  grid.innerHTML=LOGROS.map(l=>{
+    const ok=state.unlocked.includes(l.id);
+    return`<div class="logro-card ${ok?'unlocked':''}">
+      <div class="logro-icon">${l.icon}</div>
+      <div class="logro-title">${l.title}</div>
+      <div class="logro-desc">${l.desc}</div>
+      ${ok?`<div style="margin-top:8px;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold)">+${l.xp} XP</div>`:''}
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+document.getElementById('xp-display').textContent=state.xp;
+renderModules();
+renderLogros();
+</script>
+
+<footer style="text-align:center;padding:30px 20px 100px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);margin-top:40px;">
+  Desarrollada por <strong style="color:var(--gold)">Vibras Positivas HM</strong> — Derechos de Autor Reservados
+</footer>
+</body>
+</html>
