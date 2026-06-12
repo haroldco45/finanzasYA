@@ -1,67 +1,56 @@
-# 💰 FinanzasYA! — Tu escuela de dinero
+# 💰 FinanzasYA! — Versión Netlify (con Tutor IA funcional)
 
-PWA educativa de finanzas personales para jóvenes colombianos, inspirada en el portal **Mis Finanzas en Casa** de Davivienda.
+PWA educativa de finanzas personales para jóvenes colombianos.
 
-## 🎯 Descripción
+## ⚡ Por qué esta versión es diferente a GitHub Pages
 
-Aplicación web interactiva que enseña finanzas personales de forma entretenida y práctica, con tutor IA integrado, simuladores, quizzes gamificados y seguimiento de logros.
+GitHub Pages **bloquea las llamadas directas a la API de Anthropic** (error CORS).  
+Esta versión usa una **Netlify Function** como proxy seguro: el frontend llama a `/.netlify/functions/chat`, que internamente llama a Anthropic con la API key guardada como variable de entorno en Netlify (nunca expuesta al navegador).
 
-## 📚 Módulos de aprendizaje
+---
 
-| # | Módulo | Contenido |
-|---|--------|-----------|
-| 1 | 💰 El Dinero | Sistema financiero, inflación, funciones del dinero |
-| 2 | 🏦 El Ahorro | Interés compuesto, regla 50/30/20, tipos de cuentas |
-| 3 | 📊 Presupuesto | Ingresos, gastos fijos/variables, control mensual |
-| 4 | 💳 Crédito | Tasas, historial crediticio, tipos de crédito |
-| 5 | 🛡️ Seguros | SOAT, seguros de vida, hogar, salud |
-| 6 | 📈 Inversión | CDT, acciones, BVC, pirámide de inversión |
+## 🚀 Cómo desplegar en Netlify (paso a paso)
 
-## 🧮 Simuladores incluidos
-
-- **Simulador de Ahorro** — Calcula tu ahorro con interés compuesto
-- **Simulador de Crédito** — Cuota mensual y costo total
-- **Regla 50/30/20** — Distribuye tu ingreso automáticamente
-- **Meta de Ahorro** — ¿Cuánto tiempo para tu meta?
-- **Simulador CDT** — Rendimiento neto con retención en la fuente
-
-## 🤖 Tutor IA
-
-Chat con ProfeFinanzas, un tutor de finanzas con IA que responde preguntas en lenguaje colombiano cotidiano, con ejemplos reales del mercado nacional.
-
-## 🎯 Quiz Gamificado
-
-- 30+ preguntas por módulo
-- Sistema de XP y logros desbloqueables
-- Retroalimentación explicada en cada respuesta
-
-## 🏆 Sistema de Logros
-
-9 insignias desbloqueables al completar módulos, quizzes y usar herramientas.
-
-## 🛠️ Tecnologías
-
-- HTML5, CSS3, Vanilla JavaScript
-- API Anthropic Claude (Tutor IA)
-- localStorage (progreso del usuario)
-- PWA-ready
-
-## 📦 Estructura
-
+### 1. Sube este repositorio a GitHub
 ```
-finanzas-jovenes/
-├── index.html      # App completa (single file)
-└── README.md       # Este archivo
+finanzasYA-netlify/
+├── index.html
+├── netlify.toml
+├── netlify/
+│   └── functions/
+│       └── chat.js
+└── README.md
 ```
 
-## 🚀 Despliegue
+### 2. Conecta en Netlify
+- Ve a [app.netlify.com](https://app.netlify.com)
+- **Add new site → Import an existing project → GitHub**
+- Selecciona el repositorio
+- Build settings: déjalos vacíos (el `netlify.toml` los configura)
+- Clic en **Deploy site**
 
-Compatible con:
-- **GitHub Pages** (gratuito)
-- **Netlify** (gratuito)
-- **Hostinger**
+### 3. Configura la API Key (CRÍTICO)
+- En Netlify, ve a **Site settings → Environment variables**
+- Agrega:
+  - **Key:** `ANTHROPIC_API_KEY`
+  - **Value:** tu API key de Anthropic (`sk-ant-...`)
+- Clic **Save** y luego **Trigger deploy** para redesplegar
+
+### 4. ¡Listo!
+El Tutor IA funcionará correctamente. El resto de funciones (módulos, simuladores, quiz, logros) funcionan sin API key.
+
+---
+
+## 🛠️ Estructura de archivos
+
+| Archivo | Función |
+|---------|---------|
+| `index.html` | App completa (módulos, simuladores, quiz, presupuesto, logros) |
+| `netlify.toml` | Configuración de build y funciones |
+| `netlify/functions/chat.js` | Proxy seguro hacia la API de Anthropic |
+
+---
 
 ## 👨‍💻 Desarrollado por
-
 **Vibras Positivas HM** — Caucasia, Antioquia  
 Derechos de Autor Reservados © 2025
