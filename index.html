@@ -1199,18 +1199,10 @@ async function sendChat(){
   unlockLogro('asked_tutor');
   showTyping();
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch('/.netlify/functions/chat',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
-        model:'claude-sonnet-4-6',
-        max_tokens:600,
-        system:`Eres ProfeFinanzas, un tutor amigable y entusiasta de educación financiera para jóvenes colombianos. 
-Hablas de forma clara, cercana y con ejemplos de la vida real en Colombia (pesos colombianos, Davivienda, Bancolombia, Nequi, BVC, etc.).
-Explicas conceptos financieros de manera simple sin jerga compleja.
-Usas emojis con moderación. Respondes en máximo 3-4 párrafos cortos.
-Si alguien pregunta por inversiones milagrosas o pirámides, adviertes claramente del riesgo.
-No eres asesor financiero certificado y lo aclaras cuando corresponde.`,
         messages:chatHistory.slice(-8)
       })
     });
